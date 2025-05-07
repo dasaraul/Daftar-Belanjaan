@@ -94,16 +94,16 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
             ),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.15),
+                  color: theme.colorScheme.primary.withAlpha(38), // 0.15 opacity = 38/255
                   blurRadius: 20,
                   spreadRadius: 5,
-                  offset: Offset(0, -3),
+                  offset: const Offset(0, -3),
                 ),
               ],
             ),
@@ -121,12 +121,12 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                         width: 40,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
+                          color: theme.colorScheme.primary.withAlpha(51), // 0.2 opacity = 51/255
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     
                     // Header
                     Row(
@@ -152,12 +152,12 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                         ),
                       ],
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     
                     // Form fields
                     Expanded(
                       child: SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
+                        physics: const BouncingScrollPhysics(),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -170,10 +170,10 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                                 color: theme.colorScheme.primary,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             TextFormField(
                               controller: _namaController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Masukkan nama barang belanjaan',
                                 prefixIcon: Icon(Icons.shopping_bag_outlined),
                               ),
@@ -185,7 +185,7 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                                 return null;
                               },
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             
                             // Field Jumlah
                             Text(
@@ -196,10 +196,10 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                                 color: theme.colorScheme.primary,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             TextFormField(
                               controller: _jumlahController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Masukkan jumlah barang',
                                 prefixIcon: Icon(Icons.numbers_outlined),
                               ),
@@ -217,7 +217,7 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                                 return null;
                               },
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             
                             // Field Catatan
                             Text(
@@ -228,10 +228,10 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                                 color: theme.colorScheme.primary,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             TextFormField(
                               controller: _catatanController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Masukkan catatan tambahan',
                                 prefixIcon: Icon(Icons.note_outlined),
                               ),
@@ -242,21 +242,21 @@ class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProvider
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     
                     // Button Simpan
                     ElevatedButton(
                       onPressed: _simpanForm,
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         foregroundColor: Colors.white,
                         backgroundColor: theme.colorScheme.secondary,
                         elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'SIMPAN',
                         style: TextStyle(
                           fontSize: 16, 

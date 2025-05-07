@@ -18,6 +18,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
   bool _isLoading = false;
   late AnimationController _animationController;
   late Animation<double> _animation;
+  final FToast _fToast = FToast();
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
       curve: Curves.easeInOut,
     );
     _animationController.forward();
+    _fToast.init(context);
   }
 
   @override
@@ -68,19 +70,16 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
 
   // Fungsi untuk menampilkan toast dengan performa yang lebih baik
   void _tampilkanToast(String pesan, Color warna) {
-    FToast fToast = FToast();
-    fToast.init(context);
-    
-    Widget toast = Container(
+    final Widget toast = Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
         color: warna,
         boxShadow: [
           BoxShadow(
-            color: warna.withOpacity(0.3),
+            color: warna.withAlpha(76), // 0.3 opacity = 76/255
             blurRadius: 10,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -93,26 +92,20 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
             Icons.delete,
             color: Colors.white,
           ),
-          SizedBox(width: 12.0),
+          const SizedBox(width: 12.0),
           Text(
             pesan,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),
     );
     
-    fToast.showToast(
+    // Versi sederhana tanpa positionedToastBuilder
+    _fToast.showToast(
       child: toast,
-      toastDuration: Duration(seconds: 2),
-      positionedToastBuilder: (context, child) {
-        return Positioned(
-          bottom: 50.0,
-          left: 0.0,
-          right: 0.0,
-          child: child,
-        );
-      }
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: const Duration(seconds: 2),
     );
   }
 
@@ -125,6 +118,8 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
     
     await Provider.of<BelanjaanProvider>(context, listen: false)
         .tambahBelanjaan(nama, jumlah, catatan);
+    
+    if (!mounted) return;
     
     setState(() => _isLoading = false);
     
@@ -141,6 +136,8 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
     await Provider.of<BelanjaanProvider>(context, listen: false)
         .updateBelanjaan(id, nama, jumlah, catatan);
     
+    if (!mounted) return;
+    
     setState(() => _isLoading = false);
     
     _tampilkanToast("Berhasil mengedit barang belanjaan", Colors.blue);
@@ -155,6 +152,8 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
     
     await Provider.of<BelanjaanProvider>(context, listen: false)
         .hapusBelanjaan(id);
+    
+    if (!mounted) return;
     
     setState(() => _isLoading = false);
     
@@ -191,7 +190,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                       style: TextStyle(
                         fontSize: 10,
                         fontStyle: FontStyle.italic,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withAlpha(204), // 0.8 opacity = 204/255
                       ),
                     ),
                   ],
@@ -209,7 +208,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                         Icon(
                           Icons.shopping_basket_outlined,
                           size: 80,
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color: theme.colorScheme.primary.withAlpha(76), // 0.3 opacity = 76/255
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -226,7 +225,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                           child: Text(
                             'Tambahkan barang belanjaan dengan tombol di bawah',
                             style: TextStyle(
-                              color: theme.colorScheme.onBackground.withOpacity(0.7),
+                              color: theme.colorScheme.onSurface.withAlpha(178), // 0.7 opacity = 178/255
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -257,7 +256,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                               foregroundColor: Colors.white,
                               icon: Icons.edit,
                               label: 'Edit',
-                              borderRadius: BorderRadius.horizontal(left: Radius.circular(12)),
+                              borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
                             ),
                             SlidableAction(
                               onPressed: (_) => _hapusBelanjaan(item.id),
@@ -265,7 +264,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                               foregroundColor: Colors.white,
                               icon: Icons.delete,
                               label: 'Hapus',
-                              borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
+                              borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
                             ),
                           ],
                         ),
@@ -287,7 +286,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                                     : TextDecoration.none,
                                 fontWeight: FontWeight.bold,
                                 color: item.selesai 
-                                    ? theme.colorScheme.onSurface.withOpacity(0.6)
+                                    ? theme.colorScheme.onSurface.withAlpha(153) // 0.6 opacity = 153/255
                                     : theme.colorScheme.onSurface,
                               ),
                             ),
@@ -306,7 +305,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                                     Text(
                                       'Jumlah: ${item.jumlah}',
                                       style: TextStyle(
-                                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                                        color: theme.colorScheme.onSurface.withAlpha(204), // 0.8 opacity = 204/255
                                       ),
                                     ),
                                   ],
@@ -325,7 +324,7 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                                         child: Text(
                                           'Catatan: ${item.catatan}',
                                           style: TextStyle(
-                                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                            color: theme.colorScheme.onSurface.withAlpha(178), // 0.7 opacity = 178/255
                                           ),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
@@ -338,9 +337,9 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
                             ),
                             trailing: item.selesai
                                 ? Container(
-                                    padding: EdgeInsets.all(6),
+                                    padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
-                                      color: theme.colorScheme.secondary.withOpacity(0.1),
+                                      color: theme.colorScheme.secondary.withAlpha(25), // 0.1 opacity = 25/255
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -357,9 +356,9 @@ class _DaftarBelanjaanScreenState extends State<DaftarBelanjaanScreen> with Sing
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: _tampilkanFormTambah,
-            child: const Icon(Icons.add),
             tooltip: 'Tambah Barang',
             elevation: 4,
+            child: const Icon(Icons.add),
           ),
         ),
         if (_isLoading) const LayarLoading(),

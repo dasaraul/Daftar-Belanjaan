@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'screens/daftar_belanjaan_screen.dart';
+import 'screens/splash_screen.dart';
 import 'providers/belanjaan_provider.dart';
 import 'tema/tema_aplikasi.dart';
 
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Aplikasi Daftar Belanjaan',
         theme: temaAplikasi,
-        home: const DaftarBelanjaanScreen(),
+        home: const SplashScreen(), // Mengubah ke SplashScreen sebagai halaman awal
       ),
     );
   }

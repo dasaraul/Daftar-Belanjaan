@@ -17,7 +17,7 @@ class LayarLoading extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withAlpha(25),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -32,8 +32,6 @@ class LayarLoading extends StatelessWidget {
               repeat: true,
               animate: true,
               fit: BoxFit.cover,
-              // Mengoptimasi performa dengan cache
-              renderCache: RenderCache.avoidOverdraw(),
             ),
           ),
         ),

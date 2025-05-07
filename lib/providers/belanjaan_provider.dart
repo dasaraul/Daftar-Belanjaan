@@ -7,7 +7,7 @@ import '../models/belanjaan_model.dart';
 class BelanjaanProvider with ChangeNotifier {
   List<BelanjaanModel> _daftarBelanjaan = [];
   final String _kunciStorage = 'daftar_belanjaan';
-  final _uuid = Uuid();
+  final _uuid = const Uuid();
   bool _isLoading = false;
 
   List<BelanjaanModel> get daftarBelanjaan => [..._daftarBelanjaan];
@@ -37,7 +37,7 @@ class BelanjaanProvider with ChangeNotifier {
         _setLoading(false);
       }
     } catch (e) {
-      print('Error memuat data: $e');
+      debugPrint('Error memuat data: $e');
       _setLoading(false);
     }
   }
@@ -66,7 +66,7 @@ class BelanjaanProvider with ChangeNotifier {
       
       await prefs.setString(_kunciStorage, jsonString);
     } catch (e) {
-      print('Error menyimpan data: $e');
+      debugPrint('Error menyimpan data: $e');
     }
   }
 

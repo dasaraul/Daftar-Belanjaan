@@ -7,24 +7,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:daftar_belanja_abdul_flutter/main.dart';
+import 'package:daftar_belanjaan/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Verifikasi layar Daftar Belanjaan dimuat', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verifikasi bahwa App Bar dengan judul 'Daftar Belanjaan' muncul
+    expect(find.text('Daftar Belanjaan'), findsOneWidget);
+    
+    // Verifikasi bahwa pesan untuk list kosong muncul
+    expect(find.text('Belum ada barang belanjaan'), findsOneWidget);
+    
+    // Verifikasi floating action button untuk menambah item ada
+    expect(find.byIcon(Icons.add), findsOneWidget);
   });
 }
