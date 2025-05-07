@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'screens/daftar_belanjaan_screen.dart';
 import 'providers/belanjaan_provider.dart';
 import 'tema/tema_aplikasi.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Mengatur orientasi aplikasi agar tetap portrait
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  
+  // Mengatur warna status bar
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: backgroundColor,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+  
   runApp(const MyApp());
 }
 

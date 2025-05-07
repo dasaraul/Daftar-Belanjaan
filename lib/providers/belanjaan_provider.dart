@@ -8,41 +8,72 @@ class BelanjaanProvider with ChangeNotifier {
   List<BelanjaanModel> _daftarBelanjaan = [];
   final String _kunciStorage = 'daftar_belanjaan';
   final _uuid = Uuid();
+  bool _isLoading = false;
 
   List<BelanjaanModel> get daftarBelanjaan => [..._daftarBelanjaan];
+  bool get isLoading => _isLoading;
 
-  // Inisialisasi dan memuat data dari SharedPreferences
+  // Optimasi - Inisialisasi dan memuat data dari SharedPreferences
   BelanjaanProvider() {
     _muatDaftarBelanjaan();
   }
 
-  // Memuat data dari penyimpanan lokal
+  // Memuat data dari penyimpanan lokal dengan performa yang dioptimalkan
   Future<void> _muatDaftarBelanjaan() async {
     try {
+      _setLoading(true);
+      
       final prefs = await SharedPreferences.getInstance();
       final stringData = prefs.getString(_kunciStorage);
       
       if (stringData != null) {
-        final List<dynamic> daftarJson = jsonDecode(stringData);
-        _daftarBelanjaan = daftarJson
-            .map((item) => BelanjaanModel.fromMap(Map<String, dynamic>.from(item)))
-            .toList();
-        notifyListeners();
+        // Konversi ke JSON dan inisialisasi secara efisien
+        compute(_parseDaftarBelanjaan, stringData).then((value) {
+          _daftarBelanjaan = value;
+          _setLoading(false);
+          notifyListeners();
+        });
+      } else {
+        _setLoading(false);
       }
     } catch (e) {
       print('Error memuat data: $e');
+      _setLoading(false);
     }
   }
 
-  // Menyimpan data ke penyimpanan lokal
+  // Fungsi helper untuk parsing di isolate terpisah (meningkatkan performa)
+  static List<BelanjaanModel> _parseDaftarBelanjaan(String stringData) {
+    final List<dynamic> daftarJson = jsonDecode(stringData);
+    return daftarJson
+        .map((item) => BelanjaanModel.fromMap(Map<String, dynamic>.from(item)))
+        .toList();
+  }
+
+  // Helper untuk mengatur status loading
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  // Menyimpan data ke penyimpanan lokal dengan performa yang dioptimalkan
   Future<void> _simpanDaftarBelanjaan() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final daftarJson = _daftarBelanjaan.map((item) => item.toMap()).toList();
-      await prefs.setString(_kunciStorage, jsonEncode(daftarJson));
+      
+      // Konversi data ke JSON secara efisien
+      final String jsonString = await compute(_serializeDaftarBelanjaan, _daftarBelanjaan);
+      
+      await prefs.setString(_kunciStorage, jsonString);
     } catch (e) {
       print('Error menyimpan data: $e');
     }
+  }
+
+  // Fungsi helper untuk serialisasi di isolate terpisah (meningkatkan performa)
+  static String _serializeDaftarBelanjaan(List<BelanjaanModel> daftar) {
+    final daftarJson = daftar.map((item) => item.toMap()).toList();
+    return jsonEncode(daftarJson);
   }
 
   // Menambah item belanjaan baru

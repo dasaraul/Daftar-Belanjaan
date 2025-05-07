@@ -9,14 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  provider: ^6.0.5
-  shared_preferences: ^2.2.0
-  uuid: ^3.0.7
-  flutter_slidable: ^3.0.0
-  fluttertoast: ^8.2.2
-  lottie: ^2.6.0
-  dotlottie_flutter: ^1.0.0
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  shared_preferences: ^2.3.0
+  uuid: ^4.5.0
+  flutter_slidable: ^3.1.1
+  fluttertoast: ^8.2.8
+  lottie: ^3.1.2
 
 dev_dependencies:
   flutter_test:

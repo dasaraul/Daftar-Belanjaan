@@ -21,15 +21,28 @@ class FormBelanjaan extends StatefulWidget {
   State<FormBelanjaan> createState() => _FormBelanjaanState();
 }
 
-class _FormBelanjaanState extends State<FormBelanjaan> {
+class _FormBelanjaanState extends State<FormBelanjaan> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _namaController = TextEditingController();
   final _jumlahController = TextEditingController();
   final _catatanController = TextEditingController();
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
+    // Animasi untuk form
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutQuint,
+    );
+    _animationController.forward();
+    
     // Isi nilai awal jika ada (untuk edit)
     if (widget.namaAwal != null) {
       _namaController.text = widget.namaAwal!;
@@ -49,6 +62,7 @@ class _FormBelanjaanState extends State<FormBelanjaan> {
     _namaController.dispose();
     _jumlahController.dispose();
     _catatanController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -66,112 +80,198 @@ class _FormBelanjaanState extends State<FormBelanjaan> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  Expanded(
-                    child: Text(
-                      widget.judul,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+    final theme = Theme.of(context);
+    
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return FractionallySizedBox(
+          heightFactor: 0.6 * _animation.value,
+          child: Container(
+            clipBehavior: Clip.antiAlias,
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withOpacity(0.15),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                  offset: Offset(0, -3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Drag handle
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.check),
-                    onPressed: _simpanForm,
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _namaController,
-                decoration: InputDecoration(
-                  labelText: 'Nama Barang',
-                  hintText: 'Masukkan nama barang belanjaan',
-                  prefixIcon: Icon(Icons.shopping_bag),
+                    SizedBox(height: 16),
+                    
+                    // Header
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.close, color: theme.colorScheme.primary),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        Expanded(
+                          child: Text(
+                            widget.judul,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.check, color: theme.colorScheme.primary),
+                          onPressed: _simpanForm,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 24),
+                    
+                    // Form fields
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Field Nama Barang
+                            Text(
+                              'Nama Barang',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            TextFormField(
+                              controller: _namaController,
+                              decoration: InputDecoration(
+                                hintText: 'Masukkan nama barang belanjaan',
+                                prefixIcon: Icon(Icons.shopping_bag_outlined),
+                              ),
+                              textInputAction: TextInputAction.next,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Nama barang tidak boleh kosong';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            
+                            // Field Jumlah
+                            Text(
+                              'Jumlah',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            TextFormField(
+                              controller: _jumlahController,
+                              decoration: InputDecoration(
+                                hintText: 'Masukkan jumlah barang',
+                                prefixIcon: Icon(Icons.numbers_outlined),
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              textInputAction: TextInputAction.next,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Jumlah tidak boleh kosong';
+                                }
+                                int? jumlah = int.tryParse(value);
+                                if (jumlah == null || jumlah <= 0) {
+                                  return 'Jumlah harus lebih dari 0';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            
+                            // Field Catatan
+                            Text(
+                              'Catatan (Opsional)',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            TextFormField(
+                              controller: _catatanController,
+                              decoration: InputDecoration(
+                                hintText: 'Masukkan catatan tambahan',
+                                prefixIcon: Icon(Icons.note_outlined),
+                              ),
+                              maxLines: 3,
+                              textInputAction: TextInputAction.done,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    
+                    // Button Simpan
+                    ElevatedButton(
+                      onPressed: _simpanForm,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        foregroundColor: Colors.white,
+                        backgroundColor: theme.colorScheme.secondary,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'SIMPAN',
+                        style: TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                textInputAction: TextInputAction.next,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Nama barang tidak boleh kosong';
-                  }
-                  return null;
-                },
               ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _jumlahController,
-                decoration: InputDecoration(
-                  labelText: 'Jumlah',
-                  hintText: 'Masukkan jumlah barang',
-                  prefixIcon: Icon(Icons.numbers),
-                ),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                textInputAction: TextInputAction.next,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Jumlah tidak boleh kosong';
-                  }
-                  int? jumlah = int.tryParse(value);
-                  if (jumlah == null || jumlah <= 0) {
-                    return 'Jumlah harus lebih dari 0';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _catatanController,
-                decoration: InputDecoration(
-                  labelText: 'Catatan (Opsional)',
-                  hintText: 'Masukkan catatan tambahan',
-                  prefixIcon: Icon(Icons.note),
-                ),
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _simpanForm,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    'SIMPAN',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
